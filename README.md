@@ -1,1 +1,1 @@
-# DE1-Soc-VGA-GPU-lib
+# DE1-Soc-ASM-GPU-lib
