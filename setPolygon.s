@@ -2,7 +2,7 @@
 .type	setPolygon, %function
     setPolygon:
 
-    @ int address, int opcode, int color, int form, int mult, int ref_point_x, int ref_point_yz
+    @ int opcode, int color, int address, int form, int mult, int ref_point_x, int ref_point_yz
 	push	{lr}				@ Guardar LR e parametros na memória
 	sub	sp, sp, #28             
 	str	r0, [sp, #0]			@ opcode | valor 1 para os parametros de dataA_builder
