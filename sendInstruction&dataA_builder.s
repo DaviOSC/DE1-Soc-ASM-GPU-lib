@@ -80,7 +80,7 @@ fim_sendInstruction:
     .align 2
     .global dataA_builder
 dataA_builder:
-    push {lr}                  @ Salva o registrador de link (lr) na pilha
+    push {lr, r4, r5, r6}      @ Salva o registrador de link (lr), r4, r5 e r6 na pilha
     mov r3, #0                 @ data = 0 (r3)
 
     mov r4, r0                 @ opcode em r4
@@ -92,11 +92,12 @@ dataA_builder:
 
     cmp r4, #3                 @ opcode com 3
     bgt fim_dataA_builder      @ Se opcode > 3, sai da func
-@opcode sendo 1, 2 ou 3
+@ opcode sendo 1, 2 ou 3
     orr r3, r3, r6             @ data = data(0) | memory_address(em r6)
     lsl r3, r3, #4             @ data = data << 4
     orr r3, r3, r4             @ data = data | opcode(r4)
     b fim_dataA_builder
+
 case_0:
     orr r3, r3, r5             @ data = data(0) | reg(r5)
     lsl r3, r3, #4             @ data = data << 4
@@ -104,7 +105,6 @@ case_0:
 
 fim_dataA_builder:
     mov r0, r3                 @ resultado em r0
-    pop {lr}
-    bx lr
-
+    pop {r4, r5, r6, lr}       @ Restaura r4, r5, r6 e o registrador de link (lr)
+    bx lr                      @ Retorna ao chamador
 
