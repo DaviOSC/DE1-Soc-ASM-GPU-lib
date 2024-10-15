@@ -1,17 +1,21 @@
 .global	set_background_color
 .type	set_background_color, %function
+@ void set_background_color(unsigned long vermelho, 
+@ unsigned long verde, unsigned long azul)
 set_background_color:
-	@r0 = red, r1 = green, r2 = blue
-    push    {lr}            @ salvar lr na stack
+    @ dataA = reg [8:4], opcode[3:0]
+	@ dataA = 0 (reg = 0 e opcode = 0)
+    @ dataB = azul[8:6], verde[5:3], vermelho[2:0]
+    push    {lr}    
 
-    lsl r2, r2, #6          @ r2 = 0...00(blue)000000
-    lsl r1, r1, #3          @ r2 = 0...00(Green)000
-    orr r3, r1, r2          @ r2 = 0...00(blue)(Green)
-    orr r3, r3, r0          @ r1 = 0...00(blue)(Green)(Red)
-    
-    mov	r0, #0              @ dataA
+    lsl r2, r2, #6          @ r2 = azul
+    lsl r1, r1, #3          @ r1 = verde
 
-	mov r1, r3
-    bl sendInstruction      @ sendInstruction(dataA, RGB)
+    orr r1, r1, r2          @ r1 = [azul, verde]
+    orr r1, r1, r0          @ r1 = [azul, verde, vermelho]
+                            @ r1 = dataB
+    mov	r0, #0              @ r0 = dataA
+
+    bl send_instruction      @ send_instruction(dataA, dataB)
     pop     {lr}
 	bx lr

@@ -1,4 +1,4 @@
-	.arch armv5t
+	.arch armv7
 	.fpu softvfp
 	.eabi_attribute 20, 1
 	.eabi_attribute 21, 1
@@ -7,7 +7,7 @@
 	.eabi_attribute 25, 1
 	.eabi_attribute 26, 2
 	.eabi_attribute 30, 2
-	.eabi_attribute 34, 0
+	.eabi_attribute 34, 1
 	.eabi_attribute 18, 4
 	.file	"fpga_gpu.c"
 	.text
@@ -22,304 +22,296 @@
 .LC2:
 	.ascii	"Mapeamento do dev/mem n\303\243o foi realizado\000"
 	.text
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	create_mapping_memory
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	create_mapping_memory, %function
 create_mapping_memory:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, lr}
-	ldr	r1, .L9
-	ldr	r0, .L9+4
-	sub	sp, sp, #8
+	push	{r4, r5, lr}
+	movw	r4, #:lower16:.LANCHOR0
+	movt	r4, #:upper16:.LANCHOR0
+	sub	sp, sp, #12
+	movw	r1, #4098
+	movt	r1, 16
+	movw	r0, #:lower16:.LC0
+	movt	r0, #:upper16:.LC0
 	bl	open
-	ldr	r6, .L9+8
-	cmn	r0, #1
 	mov	r5, r0
-	str	r0, [r6]
+	str	r0, [r4]
+	adds	r0, r0, #1
 	beq	.L7
-	mov	ip, #-67108864
-	str	r0, [sp]
-	mov	r3, #1
-	mov	r2, #3
+	mov	r3, #-67108864
+	movs	r2, #3
+	strd	r5, r3, [sp]
 	mov	r1, #67108864
-	mov	r0, #0
-	str	ip, [sp, #4]
+	movs	r3, #1
+	movs	r0, #0
 	bl	mmap
-	cmn	r0, #1
-	mov	r4, r0
-	str	r0, [r6, #4]
+	mov	r3, r0
+	adds	r2, r0, #1
+	str	r0, [r4, #4]
 	beq	.L8
-	mov	r5, #1
 	sub	r3, r0, #58720256
-	add	r2, r3, #128
-	bic	r2, r2, #-67108864
+	movs	r5, #1
 	add	r1, r3, #112
-	str	r2, [r6, #12]
+	add	r2, r3, #128
+	bic	r1, r1, #-67108864
+	bic	r2, r2, #-67108864
+	strd	r1, r2, [r4, #8]
+	add	r1, r3, #192
 	add	r2, r3, #176
 	bic	r1, r1, #-67108864
 	bic	r2, r2, #-67108864
-	str	r1, [r6, #8]
-	str	r2, [r6, #20]
-	add	r1, r3, #192
+	strd	r1, r2, [r4, #16]
 	add	r2, r3, #160
-	add	r3, r3, #144
-	bic	r1, r1, #-67108864
+	adds	r3, r3, #144
 	bic	r2, r2, #-67108864
 	bic	r3, r3, #-67108864
-	str	r1, [r6, #16]
-	str	r2, [r6, #24]
-	str	r3, [r6, #28]
+	strd	r2, r3, [r4, #24]
 .L1:
 	mov	r0, r5
-	add	sp, sp, #8
+	add	sp, sp, #12
 	@ sp needed
-	pop	{r4, r5, r6, pc}
+	pop	{r4, r5, pc}
 .L7:
-	ldr	r1, .L9+12
-	mov	r0, #1
+	movw	r1, #:lower16:.LC1
+	movt	r1, #:upper16:.LC1
+	movs	r0, #1
 	bl	__printf_chk
 	mov	r0, r5
-	add	sp, sp, #8
+	add	sp, sp, #12
 	@ sp needed
-	pop	{r4, r5, r6, pc}
+	pop	{r4, r5, pc}
 .L8:
-	ldr	r1, .L9+16
-	mov	r0, #1
+	movw	r1, #:lower16:.LC2
+	movt	r1, #:upper16:.LC2
+	movs	r0, #1
+	mov	r5, r3
 	bl	__printf_chk
-	ldr	r0, [r6]
+	ldr	r0, [r4]
 	bl	close
-	mov	r5, r4
 	b	.L1
-.L10:
-	.align	2
-.L9:
-	.word	1052674
-	.word	.LC0
-	.word	.LANCHOR0
-	.word	.LC1
-	.word	.LC2
 	.size	create_mapping_memory, .-create_mapping_memory
 	.section	.rodata.str1.4
 	.align	2
 .LC3:
 	.ascii	"unmap realizado com sucesso\000"
 	.text
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	close_mapping_memory
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	close_mapping_memory, %function
 close_mapping_memory:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	ldr	r4, .L14
+	movw	r4, #:lower16:.LANCHOR0
+	movt	r4, #:upper16:.LANCHOR0
 	mov	r1, #67108864
 	ldr	r0, [r4, #4]
 	bl	munmap
-	cmp	r0, #0
-	popeq	{r4, pc}
-	mov	r0, #1
-	ldr	r1, .L14+4
+	cbnz	r0, .L12
+	pop	{r4, pc}
+.L12:
+	movw	r1, #:lower16:.LC3
+	movt	r1, #:upper16:.LC3
+	movs	r0, #1
 	bl	__printf_chk
 	ldr	r0, [r4]
 	pop	{r4, lr}
 	b	close
-.L15:
-	.align	2
-.L14:
-	.word	.LANCHOR0
-	.word	.LC3
 	.size	close_mapping_memory, .-close_mapping_memory
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	send_instruction
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	send_instruction, %function
 send_instruction:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r2, .L20
-	str	lr, [sp, #-4]!
+	@ link register save eliminated.
+	movw	r2, #:lower16:.LANCHOR0
+	movt	r2, #:upper16:.LANCHOR0
+	push	{r4}
 	ldr	r3, [r2, #20]
 	ldr	r3, [r3]
-.L17:
+.L14:
 	cmp	r3, #0
-	bne	.L17
-	ldr	ip, [r2, #16]
-	ldr	lr, [r2, #8]
+	bne	.L14
+	ldr	r4, [r2, #16]
+	ldr	ip, [r2, #8]
 	ldr	r2, [r2, #12]
-	str	r0, [lr]
+	str	r0, [ip]
 	str	r1, [r2]
-	str	r3, [ip]
-	ldr	pc, [sp], #4
-.L21:
-	.align	2
-.L20:
-	.word	.LANCHOR0
+	str	r3, [r4]
+	pop	{r4}
+	bx	lr
 	.size	send_instruction, .-send_instruction
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	set_polygon
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	set_polygon, %function
 set_polygon:
 	@ args = 8, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	ldr	ip, [sp, #12]
-	ldr	lr, [sp, #8]
-	ldr	r4, .L26
-	orr	lr, lr, ip, lsl #9
-	ldr	ip, [r4, #20]
-	orr	lr, lr, r3, lsl #18
-	orr	lr, lr, r1, lsl #22
-	lsl	r0, r0, #4
-	ldr	ip, [ip]
-	orr	r0, r0, #3
-	orr	lr, lr, r2, lsl #31
-.L23:
-	cmp	ip, #0
-	bne	.L23
-	ldr	r2, [r4, #8]
-	ldr	r3, [r4, #16]
-	str	r0, [r2]
-	ldr	r2, [r4, #12]
-	str	lr, [r2]
-	str	ip, [r3]
+	lsls	r0, r0, #4
+	orr	r4, r0, #3
+	ldrd	lr, r0, [sp, #8]
+	movw	ip, #:lower16:.LANCHOR0
+	movt	ip, #:upper16:.LANCHOR0
+	orr	r0, lr, r0, lsl #9
+	orr	r0, r0, r3, lsl #18
+	ldr	r3, [ip, #20]
+	orr	r0, r0, r1, lsl #22
+	orr	r0, r0, r2, lsl #31
+	ldr	r3, [r3]
+.L18:
+	cmp	r3, #0
+	bne	.L18
+	ldr	r1, [ip, #8]
+	ldr	r2, [ip, #16]
+	str	r4, [r1]
+	ldr	r1, [ip, #12]
+	str	r0, [r1]
+	str	r3, [r2]
 	pop	{r4, pc}
-.L27:
-	.align	2
-.L26:
-	.word	.LANCHOR0
 	.size	set_polygon, .-set_polygon
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	set_sprite
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	set_sprite, %function
 set_sprite:
 	@ args = 4, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, lr}
-	ldr	lr, .L32
-	ldr	r4, [sp, #8]
-	ldr	ip, [lr, #20]
-	orr	r1, r1, r4, lsl #9
+	push	{lr}
+	lsls	r0, r0, #4
+	ldr	ip, [sp, #4]
+	orr	r1, r1, ip, lsl #9
+	movw	ip, #:lower16:.LANCHOR0
+	movt	ip, #:upper16:.LANCHOR0
 	orr	r1, r1, r3, lsl #19
-	lsl	r0, r0, #4
-	ldr	ip, [ip]
-	orr	r0, r0, #3
 	orr	r1, r1, r2, lsl #29
-.L29:
-	cmp	ip, #0
-	bne	.L29
-	ldr	r2, [lr, #8]
-	ldr	r3, [lr, #16]
-	str	r0, [r2]
-	ldr	r2, [lr, #12]
-	str	r1, [r2]
-	str	ip, [r3]
-	pop	{r4, pc}
-.L33:
-	.align	2
-.L32:
-	.word	.LANCHOR0
+	ldr	r3, [ip, #20]
+	ldr	r3, [r3]
+.L22:
+	cmp	r3, #0
+	bne	.L22
+	ldr	lr, [ip, #8]
+	ldr	r2, [ip, #16]
+	str	r0, [lr]
+	ldr	r0, [ip, #12]
+	str	r1, [r0]
+	str	r3, [r2]
+	ldr	pc, [sp], #4
 	.size	set_sprite, .-set_sprite
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	set_background_color
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	set_background_color, %function
 set_background_color:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	ip, .L38
-	str	lr, [sp, #-4]!
-	ldr	r3, [ip, #20]
+	@ link register save eliminated.
+	movw	ip, #:lower16:.LANCHOR0
+	movt	ip, #:upper16:.LANCHOR0
 	orr	r0, r0, r1, lsl #3
-	ldr	r3, [r3]
+	push	{r4}
 	orr	r0, r0, r2, lsl #6
-.L35:
+	ldr	r3, [ip, #20]
+	ldr	r3, [r3]
+.L26:
 	cmp	r3, #0
-	bne	.L35
+	bne	.L26
+	ldrd	r4, r1, [ip, #8]
 	ldr	r2, [ip, #16]
-	ldr	lr, [ip, #8]
-	ldr	r1, [ip, #12]
-	str	r3, [lr]
+	str	r3, [r4]
 	str	r0, [r1]
+	pop	{r4}
 	str	r3, [r2]
-	ldr	pc, [sp], #4
-.L39:
-	.align	2
-.L38:
-	.word	.LANCHOR0
+	bx	lr
 	.size	set_background_color, .-set_background_color
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	set_background_block
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	set_background_block, %function
 set_background_block:
 	@ args = 4, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	str	lr, [sp, #-4]!
-	ldr	lr, .L44
-	add	r0, r0, r0, lsl #2
-	ldr	ip, [lr, #20]
+	push	{lr}
 	orr	r2, r2, r3, lsl #3
-	add	r1, r1, r0, lsl #4
 	ldr	r3, [sp, #4]
-	lsl	r1, r1, #4
-	ldr	ip, [ip]
-	orr	r1, r1, #2
+	movw	ip, #:lower16:.LANCHOR0
+	movt	ip, #:upper16:.LANCHOR0
 	orr	r2, r2, r3, lsl #6
-.L41:
-	cmp	ip, #0
-	bne	.L41
-	ldr	r0, [lr, #8]
-	ldr	r3, [lr, #16]
-	str	r1, [r0]
-	ldr	r1, [lr, #12]
+	movs	r3, #80
+	mla	r1, r3, r0, r1
+	ldr	r3, [ip, #20]
+	lsls	r1, r1, #4
+	ldr	r3, [r3]
+	orr	r1, r1, #2
+.L30:
+	cmp	r3, #0
+	bne	.L30
+	ldr	lr, [ip, #8]
+	ldr	r0, [ip, #16]
+	str	r1, [lr]
+	ldr	r1, [ip, #12]
 	str	r2, [r1]
-	str	ip, [r3]
+	str	r3, [r0]
 	ldr	pc, [sp], #4
-.L45:
-	.align	2
-.L44:
-	.word	.LANCHOR0
 	.size	set_background_block, .-set_background_block
-	.align	2
+	.align	1
+	.p2align 2,,3
 	.global	waitScreen
 	.syntax unified
-	.arm
+	.thumb
+	.thumb_func
 	.type	waitScreen, %function
 waitScreen:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r2, #0
-	ldr	r3, .L54
-	cmp	r2, r0
-	str	lr, [sp, #-4]!
-	mov	ip, r2
-	ldr	r1, [r3, #24]
-	ldr	lr, [r3, #28]
-	ldrgt	pc, [sp], #4
-.L53:
+	@ link register save eliminated.
+	movw	r3, #:lower16:.LANCHOR0
+	movt	r3, #:upper16:.LANCHOR0
+	push	{r4, r5}
+	movs	r2, #0
+	mov	r5, r2
+	ldrd	r1, r4, [r3, #24]
+	b	.L35
+.L36:
 	ldr	r3, [r1]
 	cmp	r3, #1
+	itt	eq
+	streq	r5, [r4]
 	addeq	r2, r2, #1
-	streq	ip, [lr]
+.L35:
 	cmp	r2, r0
-	ble	.L53
-	ldr	pc, [sp], #4
-.L55:
-	.align	2
-.L54:
-	.word	.LANCHOR0
+	ble	.L36
+	pop	{r4, r5}
+	bx	lr
 	.size	waitScreen, .-waitScreen
 	.global	fd
 	.global	pResetPulseCounter

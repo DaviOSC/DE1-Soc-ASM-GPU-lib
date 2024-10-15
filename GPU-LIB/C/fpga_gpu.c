@@ -82,8 +82,8 @@ void set_polygon(unsigned long id, unsigned long cor, unsigned long forma,
 void set_sprite(unsigned long id, unsigned long sprite_image, unsigned long ativado,
                 unsigned long x, unsigned long y)
 {
-    unsigned long dataA;   // id[8:4], opcode[3:0]
-    dataA = (id << 4) | 3; // opcode = 3
+    unsigned long dataA; // id[8:4], opcode[3:0]
+    dataA = id << 4;     // opcode = 0
 
     unsigned long dataB; // ativado[29], x[28:19], y[18:9], sprite_image[8:0]
     dataB = (ativado << 29) | (x << 19) | (y << 9) | sprite_image;
@@ -94,7 +94,7 @@ void set_sprite(unsigned long id, unsigned long sprite_image, unsigned long ativ
 void set_background_color(unsigned long vermelho, unsigned long verde,
                           unsigned long azul)
 {
-    // Par definição da cor do background Data A é fixo em 0
+    // registro = 0 e opcode = 0
     unsigned long dataA = 0;
 
     /*Ao inves de facilitar o trabalho, gabriel achou uma boa ideia

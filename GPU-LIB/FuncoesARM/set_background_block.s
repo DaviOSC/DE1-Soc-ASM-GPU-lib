@@ -1,25 +1,30 @@
 .global	set_background_block
 .type	set_background_block, %function
+@ void set_background_block(unsigned long linha, unsigned long coluna, 
+@ unsigned long vermelho, unsigned long verde, unsigned long azul)
 set_background_block:
-	@ r0 = column, r1 = line, r2 = Red, r3 = Green, Stack = Blue
-	push	{lr}				@ Guardar LR e parametros na memória
+	push	{lr}				
+	@ dataA = endereco[17:4], opcode[3:0]
+	@ endereco = (linha * 80) + coluna
+	@ opcode = 2
+	@ dataB = azul[8:6], verde[5:3], vermelho[2:0]
+	lsl r3, r3, #3		@ r3 = verde	
+	orr r3, r3, r2		@ r3 = [verde, vermelho]
 
-	lsl r3, r3, #3				@ r3 = 0...00(Green)000
-	orr r3, r3, r2				@ r3 = 0...00(Green)(Red)
-	ldr	r2, [sp, #4]			@ r2 = blue
-	lsl r2, r2, #6				@ r2 = 0...00(Blue)000000
-	orr r3, r3, r2				@ r3 = 0...00(Blue)(Green)(Red)
+	ldr	r2, [sp, #4]	@ r2 = azul
+	lsl r2, r2, #6			
+	orr r3, r3, r2		@ r3 = [azul, verde, vermelho]	
 
-	mov r2, #80
-	mul r2, r1, r2				@ line * 80
-	add r2, r0, r2 				@ r2 (address) = (line * 80) + column
+	mov r2, #80			
+	mul r0, r0, r2		@ r0 = linha * 80		
+	add r0, r0, r1 		@ r0 = endereco
 
-	lsl r2, #4
-	add r0, r2, #2
+	lsl r0, #4			
+	add r0, r0, #2		@ r0 = dataA
 
-	mov r1, r3					@ r1 = RGB
+	mov r1, r3			@ r1 = dataB
 
-	bl	sendInstruction 		@ sendInstruction(dataA, RGB)
+	bl	sendInstruction 		
 
 	pop 	{lr}
     bx lr
