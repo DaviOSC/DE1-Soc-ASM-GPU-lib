@@ -62,8 +62,8 @@ error_mmap:
 filename: .asciz "/dev/mem"
 
 @ ------------------ NOVA
-.global	create_mapping_memory
-.type	create_mapping_memory, %function
+	.global	create_mapping_memory
+	.type	create_mapping_memory, %function
 @ int create_mapping_memory()
 create_mapping_memory:
 	@ r3

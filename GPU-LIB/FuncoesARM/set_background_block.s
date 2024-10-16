@@ -1,5 +1,5 @@
-.global	set_background_block
-.type	set_background_block, %function
+	.global	set_background_block
+	.type	set_background_block, %function
 @ void set_background_block(unsigned long linha, unsigned long coluna, 
 @ unsigned long vermelho, unsigned long verde, unsigned long azul)
 set_background_block:

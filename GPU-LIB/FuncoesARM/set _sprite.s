@@ -1,5 +1,5 @@
-.global	set_sprite
-.type	set_sprite, %function
+    .global	set_sprite
+    .type	set_sprite, %function
 @void set_sprite(unsigned long id, unsigned long sprite_image,
 @   unsigned long ativado, unsigned long x, unsigned long y)
 set_sprite:

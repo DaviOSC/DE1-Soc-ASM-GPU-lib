@@ -26,8 +26,9 @@ filename: .asciz "/dev/mem"
 
 @ --------------------NOVA
 
-.global closeMappingMemory  
-closeMappingMemory:
+    .global closeMappingMemory  
+	.type	closeMappingMemory, %function
+close_mapping_memory:
     pop {r7, lr}
 
     movw	r0, #:lower16:pDevMem

@@ -1,5 +1,5 @@
-.global	set_background_color
-.type	set_background_color, %function
+    .global	set_background_color
+    .type	set_background_color, %function
 @ void set_background_color(unsigned long vermelho, 
 @ unsigned long verde, unsigned long azul)
 set_background_color:
