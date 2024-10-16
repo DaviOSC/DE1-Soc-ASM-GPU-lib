@@ -29,3 +29,45 @@ sendInstruction:
 fim_sendInstruction:
     pop {lr}
     bx lr
+
+@ ---------------- NOVA --------------
+
+	.global	send_instruction
+	.type	send_instruction, %function
+@ void send_instruction(unsigned int dataA, unsigned int dataB)
+send_instruction:
+    @ r0 = dataA
+    @ r1 = dataB
+	push	{lr}
+while_send_instruction:
+	movw	r2, #:lower16:pWrFull   
+	movt	r2, #:upper16:pWrFull
+	ldr	r2, [r2]                    @ r2 = valor de pWrFull(um endereco)
+	ldr	r2, [r2]                    @ r2 = valor indicado pelo endereco
+	cmp	r2, #0                      @ if (*pWrFull == 0)
+	bne	while_send_instruction      @ while (1)
+
+	movw	r2, #:lower16:pWrReg
+	movt	r2, #:upper16:pWrReg
+	ldr	r2, [r2]                    @ r2 = pWrReg
+	mov	r3, #0
+	str	r3, [r2]                    @ *pWrReg = 0
+
+	movw	r3, #:lower16:pDataA
+	movt	r3, #:upper16:pDataA
+	ldr	r3, [r3]                    @ r3 = pDataA
+	str	r0, [r3]                    @ *pDataA = dataA
+
+	movw	r3, #:lower16:pDATAB
+	movt	r3, #:upper16:pDATAB
+	ldr	r3, [r3]                    @ r3 = pDataB
+	str	r1, [r3]                    @ *pDATAB = dataB
+
+	mov	r3, #1
+	str	r3, [r2]                    @ *pWrReg = 1
+
+	mov	r3, #0
+	str	r3, [r2]                    @ *pWrReg = 0
+
+	pop	{lr}
+	bx	lr

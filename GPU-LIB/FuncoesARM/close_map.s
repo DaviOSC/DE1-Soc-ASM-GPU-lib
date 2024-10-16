@@ -23,3 +23,30 @@ error_munmap:
 
 .section .data
 filename: .asciz "/dev/mem"
+
+@ --------------------NOVA
+
+.global closeMappingMemory  
+closeMappingMemory:
+    pop {r7, lr}
+
+    movw	r0, #:lower16:pDevMem
+	movt	r0, #:upper16:pDevMem
+	ldr	r0, [r0]
+
+    mov r1, #0x04000000     
+    mov r7, #91                
+    swi 0                      
+
+    cmp r0, #0           
+    bne end_close_mapping
+
+    movw	r0, #:lower16:fd
+	movt	r0, #:upper16:fd
+	ldr	r0, [r0]
+
+    mov r7, #6 
+    swi 0  
+end_close_mapping:
+    pop {r7, lr}
+    bx lr                 

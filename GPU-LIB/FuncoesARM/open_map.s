@@ -60,3 +60,79 @@ error_mmap:
 
 .section .data
 filename: .asciz "/dev/mem"
+
+@ ------------------ NOVA
+.global	create_mapping_memory
+.type	create_mapping_memory, %function
+@ int create_mapping_memory()
+create_mapping_memory:
+	@ r3
+	push	{r4-r7, lr}
+	movw	r0, #:lower16:nomeArquivo
+	movt	r0, #:upper16:nomeArquivo		@ open("/dev/mem", ...
+	mov r1, #1052674						@ ...(O_RDWR | O_SYNC))
+	mov r7, #5								@ syscall: open
+	swi #0
+
+	cmp	r0, #-1								@ if(fd == -1) ...
+	bne	mmap_dev_mem						@ ... encerra o programa
+	pop 	{r4-r7, lr}
+	bx lr
+mmap_dev_mem:
+	movw	r3, #:lower16:fd
+	movt	r3, #:upper16:fd
+	str	r0, [r3]							@ guardar fd
+
+	mov r4, r0								@ r4 = fd
+	mov r0, #0								@ mmap(0,
+	mov r1, 0x04000000						@ HW_REGS_SPON,
+	mov r2, #3								@ (PROT_READ | PROT_WRITE),
+	mov r3, #1								@ MAP_SHARED, r4 = fd,
+	mov r5, 0xfc000000						@ HW_REGS_BASE)
+	mov r7, 192
+	swi #0
+
+	cmp r0, #-1
+	bne mmap_concluido
+	pop 	{r4-r7, lr}
+	bx lr
+mmap_concluido:
+	movw	r1, #:lower16:pDevMem
+	movt	r1, #:upper16:pDevMem
+	str	r0, [r1]							@ salvar pDevMem
+
+	add r0, r0, 0xff200000					@ base = pDevMem + ALT_LWFPGASLVS_OFST
+	
+	add r2, r0, 0x70
+	movw	r3, #:lower16:pDataB
+	movt	r3, #:upper16:pDataB
+	str	r2, [r3]
+
+	add r2, r0, 0x80
+	movw	r3, #:lower16:pDataA
+	movt	r3, #:upper16:pDataA
+	str	r2, [r3]
+
+	add r2, r0, 0x90
+	movw	r3, #:lower16:pResetPulseCounter
+	movt	r3, #:upper16:pResetPulseCounter
+	str	r2, [r3]
+
+	add r2, r0, 0xA0
+	movw	r3, #:lower16:pScreen
+	movt	r3, #:upper16:pScreen
+	str	r2, [r3]
+
+	add r2, r0, 0xB0
+	movw	r3, #:lower16:pWrFull
+	movt	r3, #:upper16:pWrFull
+	str	r2, [r3]
+
+	add r2, r0, 0xC0
+	movw	r3, #:lower16:pWrReg
+	movt	r3, #:upper16:pWrReg
+	str	r2, [r3]
+
+	mov r0, #1
+	pop 	{r4-r7, lr}
+	bx lr

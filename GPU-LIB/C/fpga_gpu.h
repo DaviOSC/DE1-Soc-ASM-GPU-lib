@@ -2,8 +2,8 @@
 #define _fpga_gpu_H
 
 // Barramentos da GPU
-#define DATA_A 0X70
-#define DATA_B 0X80
+#define DATA_A 0X80
+#define DATA_B 0X70
 #define RESET_PULSECOUNTER 0X90
 #define SCREEN 0XA0
 #define WRFULL 0XB0
