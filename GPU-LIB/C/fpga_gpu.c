@@ -6,38 +6,26 @@
 #include <unistd.h>
 
 unsigned long *pDevMem;
-unsigned long *pDataA;
-unsigned long *pDATAB;
-unsigned long *pWrReg;
-unsigned long *pWrFull;
-unsigned long *pScreen;
-unsigned long *pResetPulseCounter;
+
 int fd;
 
 int create_mapping_memory()
 {
     if ((fd = open("/dev/mem", (O_RDWR | O_SYNC))) == -1)
     {
-        printf("dev/mem não foi aberto");
+        printf("dev/mem não foi aberto\n");
         return -1;
     }
-    pDevMem = mmap(NULL, HW_REGS_SPAN, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, HW_REGS_BASE);
+
+    unsigned long base = HW_REGS_BASE + ALT_LWFPGASLVS_OFST;
+    pDevMem = mmap(NULL, HW_REGS_SPAN, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, base);
     if (pDevMem == MAP_FAILED)
     {
-        printf("Mapeamento do dev/mem não foi realizado");
+        printf("Mapeamento do dev/mem não foi realizado\n");
         close(fd);
         return -1;
     }
-
-    unsigned long base = pDevMem + ALT_LWFPGASLVS_OFST;
-
-    // HW_REGS_MASK é realmente necessário?
-    pDataA = (base + DATA_A) & ((unsigned long)HW_REGS_MASK);
-    pDATAB = (base + DATA_B) & ((unsigned long)HW_REGS_MASK);
-    pWrReg = (base + WRREG) & ((unsigned long)HW_REGS_MASK);
-    pWrFull = (base + WRFULL) & ((unsigned long)HW_REGS_MASK);
-    pScreen = (base + SCREEN) & ((unsigned long)HW_REGS_MASK);
-    pResetPulseCounter = (base + RESET_PULSECOUNTER) & ((unsigned long)HW_REGS_MASK);
+    printf("Dev/mem aberto e mapeado\n");
     return 1;
 }
 
@@ -55,13 +43,13 @@ void send_instruction(unsigned int dataA, unsigned int dataB)
 {
     while (1)
     {
-        if (*pWrFull == 0)
+        if (pDevMem[WRFULL / 4] == 0)
         {
-            *pWrReg = 0;
-            *pDataA = dataA;
-            *pDATAB = dataB;
-            *pWrReg = 1;
-            *pWrReg = 0;
+            pDevMem[DATA_A / 4] = dataA;
+            pDevMem[WRREG / 4] = 0;
+            pDevMem[DATA_B / 4] = dataB;
+            pDevMem[WRREG / 4] = 1;
+            pDevMem[WRREG / 4] = 0;
             break;
         }
     }
@@ -117,17 +105,17 @@ void set_background_block(unsigned long linha, unsigned long coluna, unsigned lo
     send_instruction(dataA, dataB);
 }
 
-void waitScreen(int limit)
+void wait_screen(int limit)
 {
     int screens = 0;
     while (screens <= limit)
     { // Wait x seconds for restart Game
-        if (*pScreen == 1)
+        if (pDevMem[SCREEN / 4] == 1)
         { // Checks if a screen has finished drawing.
             // Structure for counter of screen and set parameters.
             screens++;
-            *pResetPulseCounter = 1;
-            *pResetPulseCounter = 0;
+            pDevMem[RESET_PULSECOUNTER / 4] = 1;
+            pDevMem[RESET_PULSECOUNTER / 4] = 0;
         }
     }
 }

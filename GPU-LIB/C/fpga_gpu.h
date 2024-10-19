@@ -1,5 +1,5 @@
-#ifndef _fpga_gpu_H
-#define _fpga_gpu_H
+#ifndef fpga_gpu_H
+#define fpga_gpu_H
 
 // Barramentos da GPU
 #define DATA_A 0X80
@@ -49,6 +49,14 @@ typedef struct
     int data_register; // Variable that defines in which register the data relating to the sprite will be stored.
     int ativo;
 } Sprite_Fixed;
+
+void set_sprite_memory(unsigned long sprite_slot, unsigned long cor, unsigned long x, unsigned long y);
+
+/*Id : id do sprite a ser desativado. -1 desativa todos os sprites*/
+void clear_sprite(unsigned long id);
+
+/*Id : id do poligono a ser desativado. -1 desativa todos os poligonos*/
+void clear_polygon(unsigned long id);
 
 void set_sprite(unsigned long id, unsigned long sprite_image, unsigned long ativado,
                 unsigned long x, unsigned long y);
