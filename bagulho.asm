@@ -4,7 +4,7 @@ pathDevMem:
 	.ascii	"/dev/mem\000"
 	.align 2
 lw_alt:
-	.word 0xff2000
+	.word 0xff200
 
 	.data
 	.align 2
@@ -31,12 +31,21 @@ _start:
 	ldr r3, =fd
 	str	r0, [r3]							@ guardar fd
 
+	mov r0, #5
+
+	ldr r3, =fd
+	ldr r0, [r3]
+
+	mov r7, #1
+	swi #0
+
 	mov r4, r0								@ r4 = fd
 	mov r0, #0								@ mmap(0,
 	mov r1, #4096				@ HW_REGS_SPAN,
 	mov r2, #3								@ (PROT_READ | PROT_WRITE),
 	mov r3, #1								@ MAP_SHARED, r4 = fd,
 	ldr r5, =lw_alt			@ HW_REGS_BASE)
+	ldr r5, [r5]
 	mov r7, #192
 	svc #0
 
@@ -44,9 +53,9 @@ _start:
 	str	r3, [r0, #0xc0]                    @ *pWrReg = 0
  
 	mov r3, #0
-	str	r0, [r0, #0x80]                    @ *pDataA = dataA
+	str	r3, [r0, #0x80]                    @ *pDataA = dataA
 
-	mov r3, #7
+	mov r3, #0b000111111
 	str	r3, [r0, #0x70] 				@ *pDATAB = dataB          
 
 	mov	r3, #1
