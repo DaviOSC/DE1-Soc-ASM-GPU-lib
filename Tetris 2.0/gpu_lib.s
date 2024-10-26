@@ -208,6 +208,43 @@ loop_background_box:
 	pop {r4-r7, lr}
     bx lr
 
+/* Atualiza a cor de um pixel do sprite na memória da gpu.
+Sprite slot: Inteiro de 0 até 31
+Cor: Número octal de 3 dígitos(em decimal, de 0 até 511)
+X e Y: Inteiro de 0 a 19
+void set_sprite_memory(unsigned long sprite_slot, unsigned long cor,
+	 unsigned long x, unsigned long y); */
+	.align 2
+    .global	set_sprite_memory
+    .type	set_sprite_memory, %function
+set_sprite_memory:
+	push {r4, lr}				
+
+	mov r4, #400					@ tamanho do sprite = 400 palavras
+	mul r0, r0, r4					@ r0 = deslocamento do sprite na memória
+
+	mov r4, #20						@ largura do sprite = 20 palavras
+	mul r3, r3, r4			
+	add r3, r2, r3					@ r3 = deslocamento do pixel em relação ao sprite
+
+	add r0, r0, r3					@ r0 = deslocamento total
+	lsl r0, r0, #4					@ shift para adicionar opcode e enviar instrução pelo dataA
+	add r0, r0, #1 					@ opcode = 1 
+									@ r0 = dataA
+	@ máscaras para extrair cada componente da cor		
+	lsr r1, r2, #6					@ r2 = vermelho
+	and r3, r2, #0b111000 			@ r3 = [verde,000]
+	and r4, r2, #0b111 		 
+	lsl r4, r4, #6					@ r4 = [azul,000,000]   	
+
+	and r1, r1, r3
+	and r1, r1, r4					@ r1 = [azul, verde, vermelho] 
+									@ r1 = dataB
+	bl send_instruction
+
+	pop {r4, lr}
+	bx lr
+
 	.align 2
     .global	set_sprite
     .type	set_sprite, %function
