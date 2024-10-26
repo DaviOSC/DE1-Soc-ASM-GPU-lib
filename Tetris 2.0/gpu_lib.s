@@ -186,6 +186,50 @@ set_sprite:
     bx lr
 
 	.align 2
+    .global	clear_sprite
+    .type	clear_sprite, %function
+/* Id : id do poligono a ser desativado. -1 desativa todos os poligonos
+void clear_sprite(unsigned long id);*/
+clear_sprite:
+	push	{r4, lr}		
+	@ r0 = id
+	@ r4 = contador
+
+	mov r4, #1					@ i = 1
+
+	cmp r0, #-1					@ if(id == -1)
+	beq clear_all_sprite		
+								@ else
+	mov r1, #0					@ set_sprite(id = r0, sprite_image = 0,
+	mov r2, #0					@ ativado = 0,
+	mov r3, #0					@ x = 0,
+	push	{r2}				@ y =0)
+	bl set_sprite
+	pop 	{r2}
+
+	bl exit_sprite
+
+clear_all_sprite:				@ then
+	mov r0, r4
+
+	mov r1, #0					@ set_sprite(id = r0, sprite_image = 0,
+	mov r2, #0					@ ativado = 0,
+	mov r3, #0					@ x = 0,
+	push	{r2}				@ x = 0, y =0)
+	bl set_sprite
+	pop 	{r2}
+
+	add r4, #1
+
+	cmp r4, #32					@ if(id == 15)
+	bne clear_all_sprite		@ break;
+
+exit_sprite:
+    pop     {r4, lr}
+    bx lr
+
+
+	.align 2
     .global	set_polygon
     .type	set_polygon, %function
 @ void set_polygon(unsigned long id, unsigned long cor, unsigned long forma,
@@ -218,44 +262,59 @@ set_polygon:
     pop     {lr}
     bx lr
 
-@ 	.align 2
-@     .global	clear_polygon
-@     .type	clear_polygon, %function
-@ /* Id : id do poligono a ser desativado. -1 desativa todos os poligonos
-@ void clear_polygon(unsigned long id);*/
-@ clear_polygon:
-@ 	push	{lr}		
-@ 	@ r0 = id
-@ 	@ r4 = contador
+	.align 2
+    .global	clear_polygon
+    .type	clear_polygon, %function
+/* Id : id do poligono a ser desativado. -1 desativa todos os poligonos
+void clear_polygon(unsigned long id);*/
+clear_polygon:
+	push	{r4, lr}		
+	@ r0 = id
+	@ r4 = contador
 
-@ 	cmp r0, #-1					@ if(id == -1)
-@ 	beq clear_all_polygon		
-@ 								@ else
-@ 	mov r1, #0					@ set_polygon(id = r0, cor = 0,
-@ 	mov r2, #0					@ forma = 0,
-@ 	mov r3, #0					@ tamanho = 0,
-@ 	push	{r2, r3}			@ x = 0, y =0)
-@ 	bl set_polygon
-@ 	pop 	{r2, r3}
+	mov r4, #0
 
-@ 	b exit_polygon
+	cmp r0, #-1					@ if(id == -1)
+	beq clear_all_polygon		
+								@ else
+	mov r1, #0					@ set_polygon(id = r0, cor = 0,
+	mov r2, #0					@ forma = 0,
+	mov r3, #0					@ tamanho = 0,
+	push	{r2, r3}			@ x = 0, y =0)
+	bl set_polygon
+	pop 	{r2, r3}
 
-@ clear_all_polygon:				@ then
-@ 	add r0, #1					@ id++
+	bl exit_polygon
 
-@ 	mov r1, #0					@ set_polygon(id = r0, cor = 0,
-@ 	mov r2, #0					@ forma = 0,
-@ 	mov r3, #0					@ tamanho = 0,
-@ 	push	{r2, r3}			@ x = 0, y =0)
-@ 	bl set_polygon
-@ 	pop 	{r2, r3}
+clear_all_polygon:				@ then
+	mov r0, r4
 
-@ 	cmp r0, #14					@ if(id == 15)
-@ 	bne clear_all_polygon		@ break;
+	mov r1, #0					@ set_polygon(id = r0, cor = 0,
+	mov r2, #0					@ forma = 0,
+	mov r3, #0					@ tamanho = 0,
+	push	{r2, r3}			@ x = 0, y =0)
+	bl set_polygon
+	pop 	{r2, r3}
 
-@ exit_polygon:
-@     pop     {lr}
-@     bx lr
+	add r4, #1
+
+	cmp r4, #15					@ if(id == 15)
+	bne clear_all_polygon		@ break;
+
+exit_polygon:
+    pop     {r4, lr}
+    bx lr
+
+	.align 2
+    .global	read_keys
+    .type	read_keys, %function
+read_keys:
+	ldr r1, =pDevMem
+	ldr r1, [r1]
+	ldr r0, [r1, #0x0]
+	mvn r0, r0;
+	add r0, r0, #16
+	bx lr
 
 @ 	.align 2
 @ 	.global	wait_screen

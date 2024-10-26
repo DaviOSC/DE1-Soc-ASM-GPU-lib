@@ -1,5 +1,5 @@
-#ifndef fpga_gpu_H
-#define fpga_gpu_H
+#ifndef gpu_lib_H
+#define gpu_lib_H
 
 // Barramentos da GPU
 #define DATA_A 0X80
@@ -74,6 +74,8 @@ void send_instruction(unsigned int dataA, unsigned int dataB);
 void close_mapping_memory();
 
 int create_mapping_memory();
+
+int read_keys();
 
 void wait_screen(int limit);
 
