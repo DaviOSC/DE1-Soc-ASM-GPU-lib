@@ -157,6 +157,58 @@ set_background_block:
     bx lr
 
 	.align 2
+    .global	background_box
+    .type	background_box, %function
+/* 
+Desenha um retângulo usando os background blocks.
+A coordenada do retângulo é referente ao pixel do canto superior esquerdo.
+Cor deve ser dado por um octal de 3 digitos. Ex: O401. R=4, G=0, B=1.
+void background_box(unsigned long x, unsigned long y, 
+unsigned long largura, unsigned long altura, unsigned long cor)
+*/
+background_box:
+	push {r4-r7,lr}				
+
+	add r6, r0, r2					@ x + largura = x final
+	add r7, r1, r3					@ y + altura = y final
+
+	ldr r5, [sp, #20]				@ r5 = cor
+
+	mov r4, r0 						@ r4 = x
+	mov r0, r1						@ r0 = y
+	mov r1, r4 						@ r1 = x
+	@ máscaras para extrair cada componente da cor		
+	lsr r2, r5, #6					@ r2 = vermelho
+	and r4, r5, #0b111000 			
+	lsr r3, r4, #3  				@ r3 = verde
+	and r4, r5, #0b111 		    	@ r4 = azul
+	push {r1-r4}					@ salva argumentos na stack
+
+	mov r4, r0						@ contadores: i, j
+	mov r5, r1						@ i = x, j = y
+
+loop_background_box:
+									@ set_background_block(i,j,vermelho, verde, azul);
+	ldr r2, [sp, #8]				
+	ldr r3, [sp, #4]
+	mov r0, r4
+	mov r1, r5
+	bl set_background_block	
+									@ for (j = x; j < x+largura; j++)
+	add r5, r5, #1					@ j ++
+	cmp r5, r6						@ j < x + largura
+	bne loop_background_box
+									@ for (i = y; i < y+altura; i++)
+	add r4, r4, #1					@ i ++
+	ldr r5, [sp, #12]				@ j = x
+	cmp r4, r7						@ i < y + altura
+	bne loop_background_box
+
+	pop {r1-r4}
+	pop {r4-r7, lr}
+    bx lr
+
+	.align 2
     .global	set_sprite
     .type	set_sprite, %function
 @void set_sprite(unsigned long id, unsigned long sprite_image,

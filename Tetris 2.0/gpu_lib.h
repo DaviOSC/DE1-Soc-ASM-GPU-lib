@@ -66,6 +66,9 @@ void set_background_color(unsigned long vermelho, unsigned long verde,
 
 void set_background_block(unsigned long linha, unsigned long coluna, unsigned long vermelho, unsigned long verde, unsigned long azul);
 
+void background_box(unsigned long x, unsigned long y,
+                    unsigned long largura, unsigned long altura, unsigned long cor);
+
 void set_polygon(unsigned long id, unsigned long cor, unsigned long forma,
                  unsigned long tamanho, unsigned long x, unsigned long y);
 
