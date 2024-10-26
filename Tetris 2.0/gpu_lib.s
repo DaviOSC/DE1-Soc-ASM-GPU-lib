@@ -395,6 +395,40 @@ exit_polygon:
     bx lr
 
 	.align 2
+    .global	clear_background
+    .type	clear_background, %function
+clear_background:
+	push {lr}
+
+	mov r0 , #0
+	mov r1 , #0
+	mov r2 , #80
+	mov r3 , #510 					@ 510 = cor transparente
+	push {r3}
+	mov r3, #60
+	bl background_box
+
+	pop {lr}
+	bx lr
+
+	.align 2
+    .global	clear_all
+    .type	clear_all, %function
+clear_all:
+	push {lr}
+
+	bl clear_background
+
+	mov r0 , #-1
+	bl clear_all_sprite
+
+	mov r0 , #-1
+	bl clear_all_polygon
+
+	pop {lr}
+	bx lr
+
+	.align 2
     .global	read_keys
     .type	read_keys, %function
 read_keys:

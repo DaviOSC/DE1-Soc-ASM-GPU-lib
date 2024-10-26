@@ -58,6 +58,8 @@ void clear_sprite(unsigned long id);
 /*Id : id do poligono a ser desativado. -1 desativa todos os poligonos*/
 void clear_polygon(unsigned long id);
 
+void clear_all();
+
 void set_sprite(unsigned long id, unsigned long sprite_image, unsigned long ativado,
                 unsigned long x, unsigned long y);
 
