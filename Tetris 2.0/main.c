@@ -126,8 +126,8 @@ int main()
 	{
 		inputKEY = read_keys();
 		Delay(0.3);
-
-		ImprimirGameTitle(indexCor);
+		drawMatrix(TitleMatriz, 15, 20);// as cores deve ta uma loucura, deus abencoe.
+		// ImprimirGameTitle(indexCor);
 		// video_text(29,37,"Press any key to start!");
 		if (indexCor < 9)
 		{
@@ -846,6 +846,33 @@ void tetrisBlock(int column, int line, int R, int G, int B)
 			set_background_block((column * 4) + j, (line * 4) + i, R, G, B); // Pinta um bloco 4x4
 		}
 	}
+}
+
+// Função para desenhar o conteúdo de uma matriz genérica 15x20
+void drawMatrix(int matrix[15][20], int rows, int cols) {
+    int R, G, B;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            switch (matrix[i][j]) {
+                case 0:
+                    R = 0; G = 0; B = 0;  // Preto para 0
+                    break;
+                case 1:
+                    R = 7; G = 0; B = 0;      // Vermelho para 1
+                    break;
+                case 2:
+                    R = 0; G = 0; B = 0;        // Preto para 2
+                    break;
+				case 3:
+                    R = 0; G = 0; B = 7;        // azulk para 3
+                    break;
+                default:
+                    R = 0; G = 0; B = 0;  // preto por padrão
+            }
+            // Desenha o bloco 4x4 com a cor correspondente
+            tetrisBlock(j, i, R, G, B);
+        }
+    }
 }
 
 // função para gerar Delay, parametro é dado em segundos
