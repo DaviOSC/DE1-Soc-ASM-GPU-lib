@@ -381,9 +381,9 @@ clear_all_polygon:				@ then
 	mov r1, #0					@ set_polygon(id = r0, cor = 0,
 	mov r2, #0					@ forma = 0,
 	mov r3, #0					@ tamanho = 0,
-	push	{r2, r3}			@ x = 0, y =0)
+	push	{r1, r2, r3}			@ x = 0, y =0)
 	bl set_polygon
-	pop 	{r2, r3}
+	pop 	{r1, r2, r3}
 
 	add r4, #1
 
@@ -402,13 +402,13 @@ clear_background:
 
 	mov r0 , #0
 	mov r1 , #0
-	mov r2 , #80
-	mov r3 , #510 					@ 510 = cor transparente
+	mov r2 , #100
+	ldr r3 , =510 					@ 510 = cor transparente
 	push {r3}
 	mov r3, #60
 	bl background_box
 
-	pop {lr}
+	pop {r3,lr}
 	bx lr
 
 	.align 2

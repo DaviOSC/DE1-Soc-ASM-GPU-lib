@@ -36,7 +36,7 @@
 #define COLUNAS_TABULEIRO 10 // Quantidade de linhas de blocos no tabuleiro, contando com paredes
 
 #define TICKS 60			  // Quantas vezes a main é executada em um único segundo
-#define COOLDOWN_GRAVIDADE 35 // Tempo em ticks do cooldown da gravidade
+#define COOLDOWN_GRAVIDADE 20 // Tempo em ticks do cooldown da gravidade
 #define COOLDOWN_INPUT 15	  // Tempo em ticks do cooldown para input do jogador
 #define INPUT_INCLINACAO 50	  // Inclinação necessaria para aceitar o input do jogador
 
@@ -225,3 +225,5 @@ int GAME_TITLE_MATRIX[5][20] = {
 	{0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1},
 	{0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1},
 	{0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1}};
+
+int GAMEOVER_MATRIX[5][20];

@@ -1,6 +1,6 @@
 #ifndef accel_lib_h
 #define accel_lib_h
-
+#include <stdint.h>
 #define DEVID 0x00
 
 #define THRESH_TAP 0x1D
@@ -49,7 +49,7 @@ de registradores dentro do bloco I2C que controlam a comunicação entre o FPGA 
 #define I2C0_RXFLR 0x78
 #define I2C0_ENABLE_STATUS 0x9C
 
-int16_t accel_x_offset = 0;
+//int16_t accel_x_offset = 0;
 
 /*Um ponteiro global para os registradores mapeados da interface I2C.
  Ele será usado para acessar o hardware diretamente via mmap.*/

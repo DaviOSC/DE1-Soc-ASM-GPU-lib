@@ -5,10 +5,14 @@
 #include <stdint.h>
 #include <sys/mman.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "accel_lib.h" // Mapeamento de registradores do acelerômetro
 
 /* Abre o /dev/mem e mapeia a memória do I2C, retornando o descritor do arquivo.
  Ele será usado mais tarde para fechar e desmapear a memória.*/
+
+int16_t accel_x_offset = 0;
+
 int open_and_map()
 {
     int fd = open("/dev/mem", O_RDWR | O_SYNC);

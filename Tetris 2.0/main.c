@@ -174,9 +174,7 @@ int main()
 				// Movimento
 				if (cooldownMovimento == COOLDOWN_INPUT)
 				{
-					// accel_x = get_calibrated_accel_x(); // Receber inclinação da plana
-					accel_x = 0;
-					printf("%d\n", accel_x);
+					accel_x = get_calibrated_accel_x(); // Receber inclinação da plana
 					if (accel_x < -INPUT_INCLINACAO)
 					{
 						// Movimento para a esquerda
@@ -303,21 +301,6 @@ void ReceberInput(bool *gameOver, bool *hold, bool *flip, int *sentido, int *pau
 	{
 		*sentido = 1;
 	}
-
-	// //SW_read(&input);
-
-	// switch (input)
-	// {
-	// case 1 :
-	// 	*gameOver = true;
-	// 	break;
-	// case 2 :
-	// 	Pause();
-	// 	break;
-	// case 4 :
-	// 	sair = true;
-	// 	break;
-	// }
 }
 
 /* O jogador pode escolher guardar a peça flutuante atual, o jogador só poderá usar
@@ -326,9 +309,10 @@ void Hold(Tetromino *tetromino, Tetromino *hold, bool *canHold, Tetromino tetrom
 {
 	if (*canHold)
 	{
+		limpaTetromino(tetromino, tetromino->x, tetromino->y);
 		// Variável auxiliar
 		Tetromino temp = *tetromino;
-
+		limpaTela(15, 0, 20, 20);
 		// verifica se o hold está vazio
 		if (hold->formato[0][0] == -1)
 		{
@@ -337,12 +321,14 @@ void Hold(Tetromino *tetromino, Tetromino *hold, bool *canHold, Tetromino tetrom
 		}
 		else
 		{
+			limpaTetromino(tetromino, tetromino->x, tetromino->y);
 			// coloca o tetromino no hold como tetromino flutuante
 			memcpy(tetromino, hold, sizeof(*tetromino));
 		}
 
 		// coloca o tetromino flutuante no hold
 		memcpy(hold, &temp, sizeof(*tetromino));
+
 
 		// reseta coordenadas do tetromino no hold
 		hold->x = SPAWN_BLOCK_X;
@@ -531,7 +517,7 @@ bool Mover(int tabuleiro[LINHAS_TABULEIRO][COLUNAS_TABULEIRO], Tetromino *tetrom
 		{
 			// Não há colisão, movimento realizado
 			limpaTetromino(tetromino, tetromino->x, tetromino->y);
-			tetromino->x = tetromino->y + direcao;
+			tetromino->x = tetromino->x + direcao;
 			return true;
 		}
 	}
@@ -560,6 +546,7 @@ void RotacaoTetromino(int tabuleiro[LINHAS_TABULEIRO][COLUNAS_TABULEIRO], Tetrom
 		{
 			for (j = 0; j < BLOCOS_POR_PECA; j++)
 			{
+				limpaTetromino(tetromino, tetromino->x, tetromino->y);
 				if (sentido == 1)
 				{
 					// rotacionar matriz no sentido horário
@@ -622,8 +609,6 @@ void CongelarTetromino(int tabuleiro[LINHAS_TABULEIRO][COLUNAS_TABULEIRO], Tetro
 				tabuleiro o tetromino é escrito no tabuleiro com o inteiro que representa
 				sua cor*/
 				tabuleiro[tetromino->y + i][tetromino->x + j] = tetromino->cor;
-
-				clear_polygon(0);
 			}
 		}
 	}
@@ -739,7 +724,7 @@ void LimpaLinhas(int tabuleiroColisao[LINHAS_TABULEIRO][COLUNAS_TABULEIRO], int 
 			tabuleiroColisao[0][0] = 1;
 			tabuleiroColisao[0][COLUNAS_TABULEIRO] = 1;
 			*score += 100 * (k + 1);
-			limpaTela(0, 0, 20, 15);
+			limpaTela(6, 0, 14, 14);
 			// video_erase();
 		}
 	}
@@ -753,17 +738,14 @@ void ImprimirTabuleiro(int tabuleiro[LINHAS_TABULEIRO][COLUNAS_TABULEIRO])
 
 	for (i = 0; i < LINHAS_TABULEIRO; i++)
 	{
-		// printf("\n");
 		for (j = 0; j < COLUNAS_TABULEIRO; j++)
 		{
-			// printf("%d",tabuleiro[i][j]);
 			if (tabuleiro[i][j] > 0)
 			{
 				tetrisBlock((i), (j + 5), LISTA_CORES[tabuleiro[i][j]]->R, LISTA_CORES[tabuleiro[i][j]]->G, LISTA_CORES[tabuleiro[i][j]]->B);
 			}
 		}
 	}
-	// printf("\n");
 }
 
 /*Imprime um tetromino na tela nas coordenadas x e y*/
@@ -828,7 +810,7 @@ void ImprimirGameTitle(int indexCor)
 		{
 			if (GAME_TITLE_MATRIX[i][j] == 1)
 			{
-				// tetrisBlock((j)*9, (i)*9, LISTA_CORES[indexCor]->R, LISTA_CORES[indexCor]->G, LISTA_CORES[indexCor]->B);
+				tetrisBlock((i), (j), LISTA_CORES[indexCor]->R, LISTA_CORES[indexCor]->G, LISTA_CORES[indexCor]->B);
 
 				// video_box((MARGEM_ESQUERDA_TITLE + j)*9, (MARGEM_TOPO_TITLE + i)*9, (MARGEM_ESQUERDA_TITLE + j)* 9 + 9 , (MARGEM_TOPO_TITLE + i) * 9 + 9, LISTA_CORES[indexCor]);
 			}
@@ -842,18 +824,14 @@ void ImprimirTela(int tabuleiro[LINHAS_TABULEIRO][COLUNAS_TABULEIRO], Tetromino 
 {
 	ImprimirTabuleiro(tabuleiro);
 	ImprimirTetromino(tetrominoFlutuante, tetrominoFlutuante->x, tetrominoFlutuante->y);
-	ImprimirTetromino(tetrominoHold, 0, 0);
+	ImprimirTetromino(tetrominoHold, -5, 0);
 
-	set_polygon(0, 509, 0, 1, 12, 12);
 
 	int i;
 	for (i = 0; i < TAMANHO_PREVIEW; i++)
 	{
 		ImprimirTetromino(&(tetrominoPreview[i]), 11, i * 4);
 	}
-
-	char textoScore[15];
-	sprintf(textoScore, "Score: %d", *score);
 	// video_text(MARGEM_ESQUERDA_SCORE, MARGEM_TOPO_SCORE, textoScore);
 }
 
