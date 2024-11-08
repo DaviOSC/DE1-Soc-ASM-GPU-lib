@@ -1,5 +1,19 @@
 # ASM-GPU-lib | Sistemas Digitais (TP01) 
 
+- 5.1. Levantamento de requisitos;
+- 5.2. Código
+- 5.2.1. Códigos em linguagem C e assembly;
+- 5.2.2. Todos os códigos deverão estar detalhadamente comentados;
+- 5.3. Script de compilação tipo Makefile para geração do código executável;
+- 5.4. Documentação técnica escrita no arquivo READ.ME do projeto no GitHub,
+contendo, no mínimo:
+- 5.4.1. Detalhamento dos software usados no trabalho, incluindo softwares básicos;
+- 5.4.2. Detalhamento da biblioteca criada incluindo a explicação dos métodos e
+como a mesma deve ser compilada e utilizada;
+- 5.4.3. Descrição de instalação, configuração de ambiente e execução;
+- 5.5. Descrição dos testes de funcionamento do sistema, bem como, análise dos
+resultados alcançados.
+
 <p align="center">
   <img src="imagens/top45_01.jpg" width = "600" />
 </p>
@@ -10,7 +24,7 @@
 <uL> 
   <li><a href="https://github.com/Silva-Alisson">Alisson Silva</a></li>
   <li><a href="https://github.com/DaviOSC">Davi Oliveira</a></li>
-  <li><a href="https://github.com/MrLaelapz">Kauã Quintella</a></li>
+  <li><a href="https://github.com/MrLaelapz](https://github.com/kauaQuintella">Kauã Quintella</a></li>
   <li><a href="https://github.com/Viktor-401">Sinval Victor</a></li>
 </ul>
 
@@ -87,47 +101,26 @@ Perfil de Aplicação ARMv7-A:
 ##### Instruções usadas para a biblioteca:
 
 1. **`.section`, `.align`, `.ascii`, `.word`, `.zero`**: São diretivas de montagem, não instruções de máquina. Elas especificam detalhes sobre como organizar os dados e onde colocá-los na memória.
-   - `.section`: Define uma nova seção no código (por exemplo, `.rodata`, `.data`, `.text`).
-   - `.align`: Alinha os dados a um limite específico de bytes.
-   - `.ascii`: Insere uma string ASCII.
-   - `.word`: Define uma palavra de 32 bits.
-   - `.zero`: Reserva espaço e inicializa com zero.
 
 2. **`push` e `pop`**: Gerenciam a pilha. 
-   - `push {rX, lr}`: Salva os registradores na pilha, incluindo o registrador de retorno (`lr`).
-   - `pop {rX, lr}`: Recupera os valores salvos da pilha.
 
 3. **`ldr`**: Carrega um valor na memória para um registrador.
-   - `ldr r0, =pathDevMem`: Carrega o endereço de `pathDevMem` para `r0`.
-   - `ldr r3, [r3, #offset]`: Carrega o valor de um endereço baseado em `r3` e um deslocamento (`offset`), útil para acessar dados mapeados.
 
 4. **`str`**: Armazena o valor de um registrador em uma posição da memória.
-   - `str r0, [r3]`: Armazena o valor de `r0` no endereço especificado por `r3`.
 
 5. **`mov`, `movw`, `movt`**: Movem valores para registradores.
-   - `mov r7, #5`: Define `r7` com o valor 5 (utilizado para identificar syscalls).
-   - `movw` e `movt`: São usadas em conjunto para carregar valores de 32 bits em registradores (parte baixa e parte alta).
 
 6. **`svc` e `swi`**: Executam chamadas ao sistema (syscalls).
-   - `svc #0`: Invoca uma syscall, com o número da chamada e os parâmetros configurados em registradores.
 
 7. **`cmp` e `bne`/`beq`**: Comparam registradores e desviam condicionalmente.
-   - `cmp r0, #0`: Compara `r0` com zero.
-   - `bne` e `beq`: Desviam se os valores são diferentes (bne) ou iguais (beq).
 
 8. **`add`, `sub`**: Realizam operações de adição e subtração entre registradores.
-   - `add r0, r0, r1`: Soma `r1` a `r0` e armazena o resultado em `r0`.
 
 9. **`mul`**: Multiplicação.
-   - `mul r0, r1, r2`: Multiplica `r1` e `r2`, armazenando o resultado em `r0`.
 
 10. **`lsl` e `lsr`**: Realizam deslocamentos lógicos (bit shifts).
-    - `lsl r2, r2, #6`: Desloca `r2` à esquerda por 6 bits.
-    - `lsr r3, r3, #3`: Desloca `r3` à direita por 3 bits.
 
 11. **`orr` e `and`**: Realizam operações de OR e AND bit-a-bit.
-    - `orr r1, r1, r2`: Faz OR entre `r1` e `r2`.
-    - `and r4, r5, #0b111000`: Faz AND entre `r5` e `0b111000`, mascarando os bits desejados.
 
 12. **`bx lr`**: Retorna de uma função, usando o registrador de link (`lr`). 
 
@@ -148,7 +141,58 @@ O monitor empregado no projeto foi o DELL M782p, um modelo CRT que utiliza um tu
 
 ## Descrição de alto nível
 
-### Funções da <a href="https://github.com/DaviOSC/DE1-Soc-ASM-GPU-lib/blob/main/Tetris%202.0/gpu_lib.s">gpu_lib.s</a>
+### Explicação da <a href="https://github.com/DaviOSC/DE1-Soc-ASM-GPU-lib/blob/main/Tetris%202.0/gpu_lib.s">gpu_lib.s</a>
+
+A arquitetura implementada por Gabriel B. Alves para jogos 2D conta com funcionalidades específicas para exibir informações via VGA. Para usa-las, um mapeamento de memória é necessário para enviar as instruções almejadas. Dessa forma, o programa em Assembly irá conseguir ter uma comunicação direta com o periférico em questão. Esse processo é realizado através dessas funções:
+
+    int create_mapping_memory();
+
+    int close_mapping_memory();
+
+Feito esse processo, as instruções são enviadas por duas vias de dado, um relacionado ao `dataA` e outra ao `dataB`. De acordo com o TCC:
+
+-  _**dataA**_: opcodes e endereçamento do Banco de Registrador e Memórias;
+- _**dataB**_: envio de dados a serem armazenados e/ou atualizados;
+
+Seguindo essa lógica, foi criado o método `send_instruction`, que é responsável por essa tarefa.
+
+Como mencionado anteriormente, a arquitetura permite funcionalidades específicas para jogos 2D, tanto que foi descrita algumas delas no código em C, sendo elas:
+
+    int set_sprite (int registrador, int x, int y, int offset, int activation_bit);
+
+    int set_background_block (int column, int line, int R, int G, int B);
+
+    int set_background_color (int R, int G, int B);
+  
+    void increase_coordinate (Sprite *sp, int mirror);
+    
+    int collision (Sprite *sp1, Sprite *sp2);
+
+As funções set vão colocar ou alterar um elemento na tela, seja inserir um sprite ou mudar uma cor. No projeto, a função set_background_block foi a mais importante para exibir as informações na tela de acordo com os valores de uma matriz
+
+não foi adicionada as funções `increase_coordinate` e `collision` já que não era necessário.
+
+Além dessas, foram inseridas funções auxiliares para a resolução do problema:
+
+    background_box (int x, int y, int width, int height, int color);
+
+    set_sprite_memory (int sprite_slot, int color, int x, int y);
+
+    clear_sprite (int id);
+
+    set_polygon (int id, int color, int shape, int size, int x, int y);
+
+    clear_polygon(int id);
+
+    clear_background();
+
+    clear_all();
+
+    read_keys();
+
+Algumas funções presentes foram criadas para o estudo de como funciona o Processador Gráfico, já outras foram tiveram sua importância para o jogo Tetris. A função `set_sprite_memory` altera o sprite presente na memória por um outro definido pelo usuário, já a `clear_sprite` vai limpar um sprite específico da tela ou todos. `set_polygon` é responsável por imprimir um dos dois polígonos na tela, ja o `clear_polygon` remove um ou todos. Essas funções foram as únicas ultilizadas para exibir o jogo no monitor.
+
+### Explicação detalhada das funções da <a href="https://github.com/DaviOSC/DE1-Soc-ASM-GPU-lib/blob/main/Tetris%202.0/gpu_lib.s">gpu_lib.s</a>
 
 #### `create_mapping_memory() : int`
 - **Propósito**: Mapeia a memória do dispositivo `/dev/mem` para acesso direto.
@@ -166,7 +210,7 @@ O monitor empregado no projeto foi o DELL M782p, um modelo CRT que utiliza um tu
 - **Assembly**: Registros `r0` e `r1` carregam o endereço e o tamanho para `munmap`; `r0` armazena o fd antes de chamar `close`.
 
 #### `send_instruction(unsigned int dataA, unsigned int dataB) : void`
-- **Propósito**: Envia instruções compostas para um periférico.
+- **Propósito**: Envia instruções compostas para o periférico.
 - **Implementação**:
   - Primeiro, verifica o estado do periférico ao ler um endereço específico em `pDevMem`.
   - Em seguida, armazena `dataA` e `dataB` nos registros correspondentes para iniciar a operação.
@@ -245,6 +289,7 @@ O monitor empregado no projeto foi o DELL M782p, um modelo CRT que utiliza um tu
   - Carrega o estado dos botões de `pDevMem`.
   - Usa `mvn` para inverter os bits e retornar o estado dos botões.
 - **Assembly**: Usa `ldr` para carregar dados e `mvn` para inversão.
+
 
 
 <div align="justify">
