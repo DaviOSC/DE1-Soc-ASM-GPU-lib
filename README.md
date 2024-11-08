@@ -1,19 +1,5 @@
 # ASM-GPU-lib | Sistemas Digitais (TP01) 
 
-- 5.1. Levantamento de requisitos;
-- 5.2. Código
-- 5.2.1. Códigos em linguagem C e assembly;
-- 5.2.2. Todos os códigos deverão estar detalhadamente comentados;
-- 5.3. Script de compilação tipo Makefile para geração do código executável;
-- 5.4. Documentação técnica escrita no arquivo READ.ME do projeto no GitHub,
-contendo, no mínimo:
-- 5.4.1. Detalhamento dos software usados no trabalho, incluindo softwares básicos;
-- 5.4.2. Detalhamento da biblioteca criada incluindo a explicação dos métodos e
-como a mesma deve ser compilada e utilizada;
-- 5.4.3. Descrição de instalação, configuração de ambiente e execução;
-- 5.5. Descrição dos testes de funcionamento do sistema, bem como, análise dos
-resultados alcançados.
-
 <p align="center">
   <img src="imagens/top45_01.jpg" width = "600" />
 </p>
