@@ -10,7 +10,7 @@
 <uL> 
   <li><a href="https://github.com/Silva-Alisson">Alisson Silva</a></li>
   <li><a href="https://github.com/DaviOSC">Davi Oliveira</a></li>
-  <li><a href="https://github.com/MrLaelapz](https://github.com/kauaQuintella">Kauã Quintella</a></li>
+  <li><a href="https://github.com/kauaQuintella">Kauã Quintella</a></li>
   <li><a href="https://github.com/Viktor-401">Sinval Victor</a></li>
 </ul>
 
