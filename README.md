@@ -127,7 +127,7 @@ O monitor empregado no projeto foi o DELL M782p, um modelo CRT que utiliza um tu
 
 ## Descrição de alto nível
 
-### Explicação da <a href="https://github.com/DaviOSC/DE1-Soc-ASM-GPU-lib/blob/main/Tetris%202.0/gpu_lib.s">gpu_lib.s</a>
+### Explicação da <a href="https://github.com/DaviOSC/DE1-Soc-ASM-GPU-lib/blob/main/Complete/gpu_lib.s">gpu_lib.s</a>
 
 A arquitetura implementada por Gabriel B. Alves para jogos 2D conta com funcionalidades específicas para exibir informações via VGA. Para usa-las, um mapeamento de memória é necessário para enviar as instruções almejadas. Dessa forma, o programa em Assembly irá conseguir ter uma comunicação direta com o periférico em questão. Esse processo é realizado através dessas funções:
 
@@ -150,13 +150,8 @@ Como mencionado anteriormente, a arquitetura permite funcionalidades específica
 
     int set_background_color (int R, int G, int B);
   
-    void increase_coordinate (Sprite *sp, int mirror);
-    
-    int collision (Sprite *sp1, Sprite *sp2);
 
 As funções set vão colocar ou alterar um elemento na tela, seja inserir um sprite ou mudar uma cor. No projeto, a função set_background_block foi a mais importante para exibir as informações na tela de acordo com os valores de uma matriz
-
-não foi adicionada as funções `increase_coordinate` e `collision` já que não era necessário.
 
 Além dessas, foram inseridas funções auxiliares para a resolução do problema:
 
@@ -176,9 +171,9 @@ Além dessas, foram inseridas funções auxiliares para a resolução do problem
 
     read_keys();
 
-Algumas funções presentes foram criadas para o estudo de como funciona o Processador Gráfico, já outras foram tiveram sua importância para o jogo Tetris. A função `set_sprite_memory` altera o sprite presente na memória por um outro definido pelo usuário, já a `clear_sprite` vai limpar um sprite específico da tela ou todos. `set_polygon` é responsável por imprimir um dos dois polígonos na tela, ja o `clear_polygon` remove um ou todos. Essas funções foram as únicas ultilizadas para exibir o jogo no monitor.
+A função `background_box()` desenha um retângulo com largura e altura específicas através de um laço para preencher o retângulo. Já a `set_sprite_memory` altera o sprite presente na memória por um outro definido pelo usuário. A `clear_sprite` vai limpar um sprite específico da tela ou todos. `set_polygon` é responsável por imprimir um dos dois polígonos na tela (quadrado ou triângulo), enquanto o `clear_polygon` remove um ou todos. A função `clear_background()` limpa o fundo, aplicando uma cor transparente em toda a área e a `clear_all()` faz a limpeza completa da tela. E por fim, a função `read_keys()` faz a leitura do estado dos botões de entrada.
 
-### Explicação detalhada das funções da <a href="https://github.com/DaviOSC/DE1-Soc-ASM-GPU-lib/blob/main/Tetris%202.0/gpu_lib.s">gpu_lib.s</a>
+### Explicação detalhada das funções da <a href="https://github.com/DaviOSC/DE1-Soc-ASM-GPU-lib/blob/main/Complete/gpu_lib.s">gpu_lib.s</a>
 
 #### `create_mapping_memory() : int`
 - **Propósito**: Mapeia a memória do dispositivo `/dev/mem` para acesso direto.
@@ -277,7 +272,16 @@ Algumas funções presentes foram criadas para o estudo de como funciona o Proce
 - **Assembly**: Usa `ldr` para carregar dados e `mvn` para inversão.
 
 
+### MakeFile
+      #make tetris
+      tetris:
+        gcc -o tetrisExe main.c gpu_lib.s accel_lib.c -lintelfpgaup
+        sudo ./tetrisExe
 
+      #make teste
+      teste:
+        gcc -o testeExe teste.c gpu_lib.s -lintelfpgaup
+        sudo ./testeExe
 <div align="justify">
 
 ## Bibliografia
@@ -292,13 +296,4 @@ SOUZA, Fábio. Comunicação I2C. Postado em: 03 de janeiro de 2023. Disponível
 
 PATTERSON, David A.; HENNESSY, John L. Computer Organization and Design: The Hardware Software Interface, ARM Edition. 2016. Morgan Kaufmann. ISBN: 978-0-12-801733-3.
 
-FONTES:
-
-https://developer.arm.com/documentation/ddi0406/latest/
-
-###### Trello: 
-- https://trello.com/b/MT18QH97/sd
-###### GPT: 
-- https://chatgpt.com/share/670ac12f-6718-8003-8857-b176f2d0ca2b
-- https://chatgpt.com/share/670c39ec-804c-8003-942f-fa64f709721b
-- https://chatgpt.com/share/670c3a0b-1edc-8003-b0ae-fc1e65823288
+ARM. ARM Architecture Reference Manual ARMv7-A and ARMv7-R edition. Disponível em: https://developer.arm.com/documentation/ddi0406/latest. 
