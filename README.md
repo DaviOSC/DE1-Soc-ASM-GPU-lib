@@ -274,7 +274,7 @@ A função `background_box()` desenha um retângulo com largura e altura especí
 
 ### Como executar o projeto?
 
-Para executar, basta escrever no terminal `make tetris` para executar o jogo, após baixar os arquivos da pasta `source`
+Após baixar os arquivos da pasta `source`, basta executar o arquivo makefile usando `make tetris` no terminal.
 
       #make tetris
       tetris:
