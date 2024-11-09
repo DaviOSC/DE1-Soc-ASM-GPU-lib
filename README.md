@@ -274,17 +274,12 @@ A função `background_box()` desenha um retângulo com largura e altura especí
 
 ### Como executar o projeto?
 
-Para executar, basta escrever no terminal `make tetris` para executar o jogo e `make teste` para o teste.
+Para executar, basta escrever no terminal `make tetris` para executar o jogo, após baixar os arquivos da pasta `source`
 
       #make tetris
       tetris:
         gcc -o tetrisExe main.c gpu_lib.s accel_lib.c -lintelfpgaup
         sudo ./tetrisExe
-
-      #make teste
-      teste:
-        gcc -o testeExe teste.c gpu_lib.s -lintelfpgaup
-        sudo ./testeExe
 <div align="justify">
 
 ## Bibliografia
